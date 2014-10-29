@@ -20,10 +20,21 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		foreach($this->app['config']->get('database.connections') as $name => $server) {
+		$this->registerServers();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function regisyerServers()
+	{
+		$servers = $this->app['config']->get('database.connections', array());
+		$fm = $this->app['filemaker'];
+
+		foreach($servers as $name => $server) {
 
 			if(array_get($server, 'driver') === 'filemaker') {
-				$this->app['filemaker']->addServer($name, new Server(
+				$fm->addServer($name, new Server(
 					array_get($server, 'host'),
 					array_get($server, 'database'),
 					array_get($server, 'port', 80),
@@ -47,6 +58,8 @@ class FileMakerServiceProvider extends ServiceProvider {
 				$app['FileMaker\Parser\Parser']
 			);
 		});
+
+		$this->app->alias('FileMaker\FileMaker', 'filemaker');
 	}
 
 	/**
