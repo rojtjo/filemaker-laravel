@@ -26,7 +26,7 @@ class FileMakerServiceProvider extends ServiceProvider {
 	/**
 	 * @return void
 	 */
-	public function regisyerServers()
+	public function registerServers()
 	{
 		$servers = $this->app['config']->get('database.connections', array());
 		$fm = $this->app['filemaker'];
