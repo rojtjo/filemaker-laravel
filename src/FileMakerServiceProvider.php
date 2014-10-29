@@ -2,7 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 use FileMaker\FileMaker as FM;
-use FileMaker\FileMaker\Server;
+use FileMaker\Server;
 
 class FileMakerServiceProvider extends ServiceProvider {
 
