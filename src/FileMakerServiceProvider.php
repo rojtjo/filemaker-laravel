@@ -44,7 +44,7 @@ class FileMakerServiceProvider extends ServiceProvider {
 		$this->app->bindShared('FileMaker\FileMaker', function($app)
 		{
 			return new FM(
-				$app['FileMaker\FileMaker\Parser\Parser']
+				$app['FileMaker\Parser\Parser']
 			);
 		});
 	}
