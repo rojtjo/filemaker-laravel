@@ -1,6 +1,7 @@
 <?php namespace FileMaker\Laravel;
 
 use Illuminate\Support\ServiceProvider;
+use FileMaker\FileMaker as FM;
 use FileMaker\FileMaker\Server;
 
 class FileMakerServiceProvider extends ServiceProvider {
@@ -40,7 +41,12 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->bindShared('filemaker', 'FileMaker\FileMaker');
+		$this->app->bindShared('FileMaker\FileMaker', function($app)
+		{
+			return new FM(
+				$app['FileMaker\FileMaker\Parser\Parser']
+			);
+		});
 	}
 
 	/**
