@@ -20,29 +20,37 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
+		$this->package('rojtjo/filemaker', 'filemaker', __DIR__.'/..');
 		$this->registerServers();
+		$this->setDefaultServer();
 	}
 
 	/**
 	 * @return void
 	 */
-	public function registerServers()
+	private function registerServers()
 	{
-		$servers = $this->app['config']->get('database.connections', array());
+		$connections = $this->app['config']->get('filemaker::connections', array());
 		$fm = $this->app['filemaker'];
 
-		foreach($servers as $name => $server) {
-
-			if(array_get($server, 'driver') === 'filemaker') {
-				$fm->addServer($name, new Server(
-					array_get($server, 'host'),
-					array_get($server, 'database'),
-					array_get($server, 'port', 80),
-					array_get($server, 'username'),
-					array_get($server, 'password')
-				));
-			}
+		foreach($connections as $name => $connection) {
+			$fm->addServer($name, new Server(
+				array_get($connection, 'host'),
+				array_get($connection, 'database'),
+				array_get($connection, 'port', 80),
+				array_get($connection, 'username'),
+				array_get($connection, 'password')
+			));
 		}
+	}
+
+	/**
+	 * @return void
+	 */
+	private function setDefaultServer()
+	{
+		$name = $this->app['config']->get('filemaker::default');
+		$this->app['filemaker']->setDefaultServer($name);
 	}
 
 	/**
@@ -52,14 +60,13 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->bindShared('FileMaker\FileMaker', function($app)
-		{
-			return new FM(
-				$app['FileMaker\Parser\Parser']
-			);
+		$this->app['filemaker'] = $this->app->share(function($app) {
+			$parser = $app['FileMaker\Parser\Parser'];
+
+			return new FM($parser);
 		});
 
-		$this->app->alias('FileMaker\FileMaker', 'filemaker');
+		$this->app->alias('filemaker', 'FileMaker\FileMaker');
 	}
 
 	/**
@@ -70,6 +77,7 @@ class FileMakerServiceProvider extends ServiceProvider {
 	public function provides()
 	{
 		return array(
+			'filemaker',
 			'FileMaker\FileMaker'
 		);
 	}
