@@ -20,9 +20,23 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('rojtjo/filemaker-laravel', 'filemaker-laravel', __DIR__);
+		$this->registerAssets();
 		$this->registerServers();
 		$this->setDefaultServer();
+	}
+
+	/**
+	 * Registers the configuration file and handles the publish command.
+	 *
+	 * @return void
+	 */
+	private function registerAssets()
+	{
+		$this->mergeConfigFrom(__DIR__.'/config/config.php', 'filemaker-laravel.config');
+
+		$this->publishes([
+            __DIR__.'/config' => config_path('filemaker-laravel'),
+        ], 'config');
 	}
 
 	/**
@@ -30,7 +44,7 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	private function registerServers()
 	{
-		$connections = $this->app['config']->get('filemaker-laravel::connections', array());
+		$connections = $this->app['config']->get('filemaker-laravel.config.connections', array());
 		$fm = $this->app['filemaker'];
 
 		foreach($connections as $name => $connection) {
@@ -49,7 +63,7 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	private function setDefaultServer()
 	{
-		$name = $this->app['config']->get('filemaker-laravel::default');
+		$name = $this->app['config']->get('filemaker-laravel.config.default');
 		$this->app['filemaker']->setDefaultServer($name);
 	}
 
