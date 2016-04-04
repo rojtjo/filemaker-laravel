@@ -32,11 +32,15 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	private function registerAssets()
 	{
-		$this->mergeConfigFrom(__DIR__.'/config/config.php', 'filemaker-laravel.config');
+		if ($this->isLaravel5()) {
+			$this->mergeConfigFrom(__DIR__.'/config/config.php', 'filemaker-laravel.config');
 
-		$this->publishes([
-            __DIR__.'/config' => config_path('filemaker-laravel'),
-        ], 'config');
+			$this->publishes([
+				__DIR__.'/config' => config_path('filemaker-laravel'),
+			], 'config');
+		} else {
+			$this->package('rojtjo/filemaker-laravel', 'filemaker-laravel', __DIR__);
+		}
 	}
 
 	/**
@@ -44,7 +48,11 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	private function registerServers()
 	{
-		$connections = $this->app['config']->get('filemaker-laravel.config.connections', array());
+		$key = $this->isLaravel5() ?
+			'filemaker-laravel.config.connections' :
+			'filemaker-laravel::connections';
+
+		$connections = $this->app['config']->get($key, array());
 		$fm = $this->app['filemaker'];
 
 		foreach($connections as $name => $connection) {
@@ -63,7 +71,11 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	private function setDefaultServer()
 	{
-		$name = $this->app['config']->get('filemaker-laravel.config.default');
+		$key = $this->isLaravel5() ?
+			'filemaker-laravel.config.default' :
+			'filemaker-laravel::default';
+
+		$name = $this->app['config']->get($key);
 		$this->app['filemaker']->setDefaultServer($name);
 	}
 
@@ -94,5 +106,13 @@ class FileMakerServiceProvider extends ServiceProvider {
 			'filemaker',
 			'FileMaker\FileMaker'
 		);
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function isLaravel5()
+	{
+		return version_compare(Application::VERSION, '5.0.0') >= 0;
 	}
 }
