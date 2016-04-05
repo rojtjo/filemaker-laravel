@@ -21,17 +21,17 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->registerAssets();
+		$this->registerResources();
 		$this->registerServers();
 		$this->setDefaultServer();
 	}
 
 	/**
-	 * Registers the configuration file and handles the publish command.
+	 * Registers the package resources and handles publishing of package resources.
 	 *
 	 * @return void
 	 */
-	private function registerAssets()
+	private function registerResources()
 	{
 		if ($this->isLaravel5()) {
 			$this->mergeConfigFrom(__DIR__.'/config/config.php', 'filemaker-laravel.config');
