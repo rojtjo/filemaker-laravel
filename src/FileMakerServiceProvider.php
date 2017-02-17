@@ -1,12 +1,15 @@
-<?php namespace FileMaker\Laravel;
+<?php
+
+namespace FileMaker\Laravel;
 
 use Illuminate\Support\ServiceProvider;
 use FileMaker\FileMaker as FM;
+use FileMaker\Parser\Parser;
 use FileMaker\Server;
 use Illuminate\Foundation\Application;
 
-class FileMakerServiceProvider extends ServiceProvider {
-
+class FileMakerServiceProvider extends ServiceProvider
+{
 	/**
 	 * Indicates if loading of the provider is deferred.
 	 *
@@ -87,11 +90,19 @@ class FileMakerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app['filemaker'] = $this->app->share(function($app) {
-			$parser = $app['FileMaker\Parser\Parser'];
+		if ($this->isLaravel5()) {
+			$this->app->singleton('filemaker', function ($app) {
+				$parser = $app[Parser::class];
 
-			return new FM($parser);
-		});
+				return new FM($parser);
+			});
+		} else {
+			$this->app['filemaker'] = $this->app->share(function($app) {
+				$parser = $app[Parser::class];
+
+				return new FM($parser);
+			});
+		}
 
 		$this->app->alias('filemaker', 'FileMaker\FileMaker');
 	}
