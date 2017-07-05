@@ -65,7 +65,8 @@ class FileMakerServiceProvider extends ServiceProvider
                 array_get($connection, 'database'),
                 array_get($connection, 'port', 80),
                 array_get($connection, 'username'),
-                array_get($connection, 'password')
+                array_get($connection, 'password'),
+                array_get($connection, 'options', [])
             ));
         }
     }
