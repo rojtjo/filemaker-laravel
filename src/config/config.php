@@ -1,19 +1,21 @@
 <?php
 
-return array(
+return [
+    'default' => 'main',
 
-	'default' => 'main',
+    'connections' => [
 
-	'connections' => array(
+        'main' => [
+            'host' => '',
+            'database' => '',
+            'port' => 80,
+            'username' => '',
+            'password' => '',
+            'options' => [
+                'ssl' => true,
+                'pretend_php' => false,
+            ],
+        ],
 
-		'main' => array(
-			'host' => '',
-			'database' => '',
-			'port' => 80,
-			'username' => '',
-			'password' => ''
-		),
-
-	)
-
-);
+    ],
+];
