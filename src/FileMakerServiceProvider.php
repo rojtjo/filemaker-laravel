@@ -6,6 +6,7 @@ use FileMaker\FileMaker as FM;
 use FileMaker\Parser\Parser;
 use FileMaker\Server;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
 class FileMakerServiceProvider extends ServiceProvider
@@ -61,12 +62,12 @@ class FileMakerServiceProvider extends ServiceProvider
 
         foreach ($connections as $name => $connection) {
             $fm->addServer($name, new Server(
-                array_get($connection, 'host'),
-                array_get($connection, 'database'),
-                array_get($connection, 'port', 80),
-                array_get($connection, 'username'),
-                array_get($connection, 'password'),
-                array_get($connection, 'options', [])
+                Arr::get($connection, 'host'),
+                Arr::get($connection, 'database'),
+                Arr::get($connection, 'port', 80),
+                Arr::get($connection, 'username'),
+                Arr::get($connection, 'password'),
+                Arr::get($connection, 'options', [])
             ));
         }
     }
